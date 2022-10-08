@@ -1,9 +1,10 @@
 from aiogram.types import BotCommandScopeDefault, BotCommandScopeChat, BotCommand
 
 from loader import _, bot, i18n
+from typing import List
 
 
-def get_default_commands(lang: str = 'en') -> list[BotCommand]:
+def get_default_commands(lang: str = 'en') -> List[BotCommand]:
     commands = [
         BotCommand('/start', _('start bot', locale=lang)),
         BotCommand('/help', _('how it works?', locale=lang)),

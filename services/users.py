@@ -3,6 +3,7 @@ from peewee import fn
 from data.config import ADMINS
 from models import User
 from utils.misc.logging import logger
+from typing import List
 
 
 def count_users() -> int:
@@ -10,7 +11,7 @@ def count_users() -> int:
     return query.scalar()
 
 
-def get_users() -> list[User]:
+def get_users() -> List[User]:
     query = User.select()
 
     return list(query)
@@ -33,7 +34,7 @@ def edit_user_language(id: int, language: str):
     query.execute()
 
 
-def create_user(id: int, name: str, username: str = None, language: str = None) -> User:
+def create_user(id: int, name: str, username: str = None, language: str = None) -> User:    
     new_user = User.create(id=id, name=name, username=username, language=language)
 
     if id in ADMINS:

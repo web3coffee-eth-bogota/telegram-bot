@@ -16,12 +16,13 @@ pybabel update -i data/locales/bot.pot -d data/locales -D bot
 
 from aiogram.contrib.middlewares.i18n import I18nMiddleware
 from aiogram.types import Message
+from typing import Any, List
 
 from data.config import I18N_DOMAIN, LOCALES_DIR
 
 
 class ACLMiddleware(I18nMiddleware):
-    async def get_user_locale(self, action: str, args: list[Message, dict[str]]):
+    async def get_user_locale(self, action: str, args: Any):
         *_, data = args
         user = data['user']
 

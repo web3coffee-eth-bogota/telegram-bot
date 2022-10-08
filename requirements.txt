@@ -1,4 +1,4 @@
-aiogram
+aiogram==2.22.1
 cryptocompare
 python-decouple
 aioredis==1.3.1

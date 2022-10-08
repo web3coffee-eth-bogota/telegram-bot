@@ -5,7 +5,7 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.utils.exceptions import Throttled
 
 from loader import _, config
-
+from typing import List
 
 class ThrottlingMiddleware(BaseMiddleware):
     def __init__(self, limit: float = config.RATE_LIMIT, key_prefix: str = 'antiflood_'):
@@ -13,13 +13,13 @@ class ThrottlingMiddleware(BaseMiddleware):
         self.prefix = key_prefix
         super(ThrottlingMiddleware, self).__init__()
 
-    async def on_process_message(self, message: Message, data: dict[str]):
+    async def on_process_message(self, message: Message, data: List[str]):
         await self._throttle(message, data)
 
-    async def on_process_callback_query(self, query: CallbackQuery, data: dict[str]):
+    async def on_process_callback_query(self, query: CallbackQuery, data: List[str]):
         await self._throttle(query.message, data)
 
-    async def _throttle(self, message: Message, data: dict[str]):
+    async def _throttle(self, message: Message, data: List[str]):
         handler = current_handler.get()
         dispatcher = Dispatcher.get_current()
         if handler:

@@ -1,12 +1,12 @@
 from datetime import datetime
 
-from peewee import IntegerField, CharField, BooleanField, DateTimeField
+from peewee import BigIntegerField, CharField, BooleanField, DateTimeField
 
 from .base import BaseModel, database
 
 
 class User(BaseModel):
-    id = IntegerField(primary_key=True)
+    id = BigIntegerField(primary_key=True)
     name = CharField()
     username = CharField(default=None)
     language = CharField(default='en')
