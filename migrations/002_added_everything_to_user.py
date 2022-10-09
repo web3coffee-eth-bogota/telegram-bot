@@ -1,4 +1,4 @@
-"""Peewee migrations -- 002_upgraded_user_model.py.
+"""Peewee migrations -- 002_added_everything_to_user.py.
 
 Some examples (model - class or model name)::
 
@@ -40,10 +40,10 @@ def migrate(migrator: Migrator, database, fake=False, **kwargs):
     migrator.add_fields(
         'users',
 
-        social_link=pw.CharField(constraints=[SQL("DEFAULT ''")], default='', max_length=255),
         location=pw.CharField(constraints=[SQL("DEFAULT ''")], default='', max_length=255),
-        career=pw.CharField(constraints=[SQL("DEFAULT ''")], default='', max_length=255),
-        interests=pw.CharField(constraints=[SQL("DEFAULT ''")], default='', max_length=255))
+        expectations=pw.CharField(constraints=[SQL("DEFAULT ''")], default='', max_length=255),
+        interests=pw.CharField(constraints=[SQL("DEFAULT ''")], default='', max_length=255),
+        social_link=pw.CharField(constraints=[SQL("DEFAULT ''")], default='', max_length=255))
 
     migrator.remove_fields('users', 'username')
 
@@ -56,4 +56,4 @@ def rollback(migrator: Migrator, database, fake=False, **kwargs):
 
         username=pw.CharField(max_length=255))
 
-    migrator.remove_fields('users', 'social_link', 'location', 'career', 'interests')
+    migrator.remove_fields('users', 'location', 'expectations', 'interests', 'social_link')

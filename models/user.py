@@ -10,8 +10,8 @@ class User(BaseModel):
     name = CharField()
     language = CharField(default='en')
     social_link = CharField(default='')
-    career = CharField(default='')
     interests = CharField(default='')
+    expectations = CharField(default='')
     location = CharField(default='')
 
     is_admin = BooleanField(default=False)

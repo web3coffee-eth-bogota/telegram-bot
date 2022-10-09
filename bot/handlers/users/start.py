@@ -12,6 +12,7 @@ from bot.commands import set_admin_commands
 from bot.keyboards.inline import *
 from loader import dp, _, i18n
 from models import User
+from services.users import edit_user_data, get_user
 
 
 class Form(StatesGroup):
@@ -21,9 +22,6 @@ class Form(StatesGroup):
     expectations = State()
     location = State()
 
-    #dp.bot.send_message(callback_query.message.from_user.id, "text")
-
-@dp.message_handler(state='*', commands='cancel')
 @dp.message_handler(CommandStart())
 async def _start(message: Message, user: User, state: FSMContext):
     if user.is_admin:
@@ -95,67 +93,75 @@ async def _expectations(message: Message, state: FSMContext):
     await Form.next()
     await message.answer(text, reply_markup=get_expectations_inline_markup())
 
-@dp.callback_query_handler(Regexp('^expectation_(.)'))
-async def _format(callback_query: CallbackQuery, regexp: Regexp, state: FSMContext):
+@dp.callback_query_handler(state=Form.expectations)
+async def _format(callback_query: CallbackQuery, state: FSMContext):
     text = _("☕️ Do you prefer online or offline meetings? \n\n"
-        "💡 If you choose 'yes', the bot will try to pick up the matching from your city")
+        "💡 If you choose 'offline', the bot will try to pick up the matching from your city")
 
-    answer = regexp.group(1)
+    answer = callback_query.data
+
+    print(f"hey hey {answer}")
 
     async with state.proxy() as data:
-        if answer == 100: 
+        if answer == "100-0": 
             data['expectations'] = "100% work"
-        if answer == 70: 
+        if answer == "70-30": 
             data['expectations'] = "70% work and 30% fun"
-        if answer == 50: 
+        if answer == "50-50": 
             data['expectations'] = "50% work and 50% fun"
-        if answer == 30: 
+        if answer == "30-70": 
             data['expectations'] = "30% work and 70% fun"
-        if answer == 00: 
+        if answer == "0-100": 
             data['expectations'] = "100% fun"
 
     await Form.next()
     await callback_query.message.answer(text, reply_markup=get_location_inline_markup())
 
 
-@dp.callback_query_handler(Regexp('^location_(.)'))
-async def _city(callback_query: CallbackQuery, regexp: Regexp, state: FSMContext):
+@dp.callback_query_handler(state=Form.location)
+async def _format(callback_query: CallbackQuery, state: FSMContext):
     text = _("☕️ What city are you looking for?")
 
-    answer = regexp.group(1)
-    print(f"hey + {answer}")
+    answer = callback_query.data
 
     async with state.proxy() as data:
-        if answer == 1: 
-            data['location'] = "online"
+        edit_user_data(
+            callback_query.from_user.id, data['name'], data['social_link'], 
+            data['interests'], data['expectations'], answer)
 
-    if answer == 2:
-        await Form.location.set()
-        await callback_query.message.answer(text)
-    else:
-        await state.finish()
-        _final()
+    await state.finish()
 
-@dp.callback_query_handler(state=Form.location)
-async def _final(message: Message, regexp: Regexp, state: FSMContext):
     text = _("It's done! 🙌"
         "This is how your profile will look like:")
 
-    await state.finish()
+    await callback_query.message.answer(text)
+
+    user = get_user(callback_query.from_user.id)
+
+    text = _(
+        f"💡 Profile: {user.name} ({user.location})"
+        f"👉 Social: {user.social_link} \n"
+        f"👉 Interests: {user.interests} \n"
+        f"👉 Meetings expectations: {user.expectations} \n"
+
+        "If you need to change something, just type /help")
+
+    await callback_query.message.answer(text)
+
+
+@dp.message_handler(Regexp('profile'))
+async def _final(message: Message, user: User):
+    user = get_user(message.from_user.id)
+
+    text = _(f"{user.name} ({user.location}) \n"
+        f"Profile: {user.social_link} \n\n"
+        f"What do you do: {user.career} \n\n"
+        f"Interests: {user.interests} \n\n"
+        f"Expectations: {user.expectations} \n\n"
+
+        "If you need to change something, just type /help")
+
     await message.answer(text)
-    _final()
-
-@dp.callback_query_handler(Regexp('profile'))
-async def _final(callback_query: CallbackQuery):
-    text = _("{username} ({location}) \n"
-        "Profile: {social_link} \n\n"
-        "What do you do: {career} \n\n"
-        "Interests: {interests} \n\n"
-        "Expectations: {expectation} \n\n"
-
-        "If you need to change something, just type /help").format()
-
-    await callback_query.message.answer(text, reply_markup=get_explanation_inline_markup())
 
 
 @dp.message_handler(CommandHelp())

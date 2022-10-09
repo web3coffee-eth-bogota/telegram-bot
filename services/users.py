@@ -33,6 +33,10 @@ def edit_user_language(id: int, language: str):
     query = User.update(language=language).where(User.id == id)
     query.execute()
 
+def edit_user_data(id: int, name: str, social_link: str, interests: str, expectations: str, location: str):
+    query = User.update(name=name, social_link=social_link, 
+        interests=interests, expectations=expectations, location=location).where(User.id == id)
+    query.execute()
 
 def create_user(id: int, name: str, username: str = None, language: str = None) -> User:    
     new_user = User.create(id=id, name=name, username=username, language=language)
