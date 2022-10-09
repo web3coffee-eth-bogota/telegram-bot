@@ -8,8 +8,11 @@ from .base import BaseModel, database
 class User(BaseModel):
     id = BigIntegerField(primary_key=True)
     name = CharField()
-    username = CharField(default=None)
     language = CharField(default='en')
+    social_link = CharField(default='')
+    career = CharField(default='')
+    interests = CharField(default='')
+    location = CharField(default='')
 
     is_admin = BooleanField(default=False)
 

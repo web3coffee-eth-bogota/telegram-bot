@@ -30,3 +30,4 @@ async def _settings(message: Message):
     text = _('Choose your language')
 
     await message.answer(text, reply_markup=get_language_inline_markup())
+
