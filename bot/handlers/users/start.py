@@ -43,7 +43,7 @@ async def _start(message: Message, user: User, state: FSMContext):
 async def _explanation(callback_query: CallbackQuery):
     text = _("Let's go to basics. That's how everything works")
 
-    photo = open("data/images/explan.jpg", "rb")
+    photo = open("data/images/explanation.jpg", "rb")
 
     await callback_query.message.answer(text)
 
@@ -131,7 +131,7 @@ async def _format(callback_query: CallbackQuery, state: FSMContext):
 
     await state.finish()
 
-    text = _("It's done! 🙌"
+    text = _("It's done! 🙌\n"
         "This is how your profile will look like:")
 
     await callback_query.message.answer(text)
@@ -139,9 +139,9 @@ async def _format(callback_query: CallbackQuery, state: FSMContext):
     user = get_user(callback_query.from_user.id)
 
     text = _(
-        f"💡 Profile: {user.name} ({user.location})"
+        f"💡 Profile: {user.name} ({user.location}) \n"
         f"👉 Social: {user.social_link} \n"
-        f"👉 Interests: {user.interests} \n"
+        f"👉 Interests: {user.interests} \n\n"
         f"👉 Meetings expectations: {user.expectations} \n"
 
         "If you need to change something, just type /help")
